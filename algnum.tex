@@ -1,0 +1,604 @@
+\documentclass{report}
+\usepackage{amssymb,amsmath,amsthm,calc}
+\usepackage[paperheight=670pt,paperwidth=460pt,textheight=591.5302pt,textwidth=418.25368pt]{geometry}  %documentacion en generic/geometry
+%El paquete de babel produce algunas incompatibilidades.
+%el no-quoting desactiva '<' y '>' para quoting lo que interfiere con algunas librerías. 
+%Si se sigue teniendo problemas poner 
+
+% Al elegir a4paper sale:
+%paperheight: 845.04684pt
+%paperwidth:597.50787pt
+%textheight: 591.5302pt
+%textwidth: 418.25368pt
+%headsep: 25.0pt
+%headheight: 12.0pt
+%footskip: 30.0pt
+
+%\usepackage[spanish,es-noshorthands]{babel} que quita aún más 
+\usepackage[spanish,es-noquoting]{babel}  
+\usepackage[latin1]{inputenc}   %documentacion en generic/inputenc
+\usepackage{tikz} 				%documentacion en generic/pgf
+\usetikzlibrary{calc,arrows}
+\usepackage{hyperref}			%documentacion en generic/hyperref
+\usepackage{listings}			%documentacion en generic/listings
+\usepackage[many]{tcolorbox}    % los formatos de teormeas y enunciados
+
+\usepackage{moreverb}
+\usepackage{multicol}
+
+% Macros
+\def\Qalg{\overline{\mathbb{Q}}}
+
+\begin{document}
+\input{../defs}
+\begin{multicols}{2}
+\newcommand{\G}{\mathbb{G}}
+\newcommand{\n}{\mathcal{N}}
+\newcommand{\OO}{\mathcal{O}}
+\renewcommand{\mod}[1]{\,\operatorname{mod}\,#1} 
+\lstset{
+  %basicstyle=\ttfamily\tiny, % small
+  basicstyle=\ttfamily\scriptsize, % middle
+}
+\newcommand{\sm}[1]{\begingroup\fontsize{7pt}{9pt}\selectfont #1\endgroup}
+\newcounter{z}
+
+%\newcommand{\Conj}[1]{\overline{#1}}
+\newcommand*\rows{42}
+\newcommand*\cols{52}
+\newcommand*\altura{0.866025}
+
+\newcommand{\ffield}[1]{\mathbb F_{#1}}
+\newcommand{\caffield}[1]{\overline{\mathbb F_{#1}}}
+
+% Números algebraicos (con la idea de sescribir un blog)
+
+En tiempos de mi tatarabuelo los libros de teoría algebraica de los números empezaban definiendo los números algebraicos como raices de polinomios con coeficientes enteros, en esos tiempos algunos autores titulaban sus libros ``Introducción a la teoría de los números algebraicos'' (Pollard), o a la teoría de "cuerpos de números algebraicos'' (Hilbert), o ''Conferencias sobre la teoría de números algebraicos'' (Hecke) y así sucesivamente.
+
+Ahora las cosas han cambiado enormemente, para empezar los libros ya no definen los números algebraicos al principio, en vez de eso hablan de unas cosas llamadas valuaciones\footnote{{\em valuations} en inglés, no estoy totalmente seguro de que esta sea la traducción correcta al castellano}, de anillos de Dedekind, de normas y trazas, de cuerpos completos y de otra infinidad de cosas antes de definir el término número algebraico (si es que llegan a definirlo). Esto marca un cambio en los nombres de los libros que han pasado a llamarse ``Teoría algebraica de los números'' (Lang), ``Introducción a la teoría algebraica de los números'' (múltiples autores), aunque la diferencia en los nombres es sutil, -- en el primer caso los {\em algebraicos} son los números y en el segundo la que es {\em algebraica} es la teoría--, la diferencia es importante, en los primeros suelo seguir los argumentos sin dificultad prácticamente hasta el final del libro, mientras que en los segundos me pierdo antes de terminar el primer capítulo.
+
+Mi objetivo es llegar a entender la teoría algebraica usando los números algebraicos. Para haceros una idea de las dificultades de este plan intentad leer el primer capítulo de {\em Basic number theory} the André Weil \cite{Weil:BNT}. 
+
+\section{TAN 1. Números algebraicos}
+
+	El teorema fundamental del álgebra nos asegura que todo polinomio 
+		$$ A(x) = x^n + a_{n-1} x^{n-1} + \dots + a_1 x + a_0 $$
+	tiene exactamente $n$ raíces, reales o complejas, contando multiplicidades, es decir que podemos escribir:
+		$$ A(x) = (x-\alpha_1)(x-\alpha_2)\dots (x-\alpha_n) $$
+	donde los $\alpha_i \in \C$, son los ceros o raices de $A(x)$. La teoría de los números algebraicos trata de éstos números: de los números que son raices de polinomios con coeficientes racionales.
+	
+	Los números algebraicos incluyen a los racionales ya que cualquier número racional $a$ es trivialmente una raiz del polinomio $x-a$. Pero también incluyen una gran cantidad de números que no son racionales, por ejemplo $\sqrt{2}$, la diagonal del cuadrado de lado 1, que es raiz del polinomio $x^2-2$, pero no es un número racional tal y como demostró un pitagórico al que, según la leyenda, el descubrimiento le costó la vida. 
+
+	Como consecuencia del teorema fundamental del álgebra, se dice que el conjunto de los números complejos $\C$, es algebraicamente cerrado, ya que todo polinomio tiene una raiz en él. El conjunto de todos los números algebraicos (al que se suele representar con el símbolo $\Qalg$) es también obviamente algebraicamente cerrado y podemos considerarlo como un subcuerpo de $\mathbb C$.
+
+	Más adelante descubriremos que los números algebraicos están llenos de rarezas, sin embargo no son los números más raros, para verlo empecemos con un resultado muy sencillo: {\em El conjunto de los números algebraicos es numerable}. Para demostrarlo numeramos los polinomios con coeficientes enteros positivos, poniendo primero los que tienen menor valor de 
+		$$ n + a_n + \dots + a_0 $$
+	y ordenando éstos en orden lexicográfico de los coeficientes, en la ordenación de los números algebraico pondremos consecutivos las $n$ raices (en orden lexicográfico de sus coordenadas real e imaginaria) de cada uno de los $2^{n+1}$ polinomios resultantes de poner un signo $\pm$ en cada uno de los coeficientes. Esto nos da una numeración precisa de todas las raices de polinomios \refeq{TAN:1:1}, (y aún cada número algebraico se repite una infinidad de veces) lo que prueba que existe una inyección de los números algebraicos en $\mathbb N$, como el recíproco es obvio los números algebraicos tienen el cardinal numerable. 
+
+	En 1844 Joseph Liouville demostró que existen números que no son raiz de ningún polinomio con coeficientes racionales. Algo más tarde Georg Cantor demostró mucho más: los números reales no son numerables, es decir la mayor parte de los números reales no son raices de ecuaciones polinómicas con coeficientes racionales. Esto se deriva del argumento conocido como de diagonalización muy utilizado en otras ramas de matemáticas sobre todo en la lógica: Vamos a ver por reducción al absurdo que el conjunto de puntos del intervalo [0,1] no es numerable; si lo fuera consideremos una numeración de todos los puntos del segmento $a_1,a_2,a_3,\dots$, al escribirlos en base 2, serán de la forma 
+		$$ a_k =  0,d_1^{(k} d_2^{(k} d_3^{(k} \dots $$ 
+	donde cada $d_i^{(k}$ es o cero o uno. Ahora consideremos el número $x$ formado de la siguiente manera: su dígito $k$-simo es igual a $1-d_k$, donde $d_k$ es el dígito $k$--simo de $a_k$. Claramente $x \ne a_k$ por que difiere de él en el $k$--simo dígito luego $x$ no está en nuestra sucesión, y hemos llegado a una contradicción ya que $x \in [0,1]$ luego por hipótesis debía estar contado con anterioridad. Curiosamente ni Liouville ni Cantor fueron ejecutados como consecuencia de sus descubrimientos, y eso que implica que prácticamente todos los números son infinitamente más extraños que $\sqrt{2}$; {\em o tempora o mores}. 
+
+	En cualquier caso concluimos que el conjunto de los números algebraicos $\Qalg$, es estrictamente más pequeño que $\mathbb C$. 
+
+	\begin{nota}
+		El teorema de Liouville indica que los números algebraicos se aproximan muy mal utilizando números racionales, de forma más precisa: 
+		\begin{teor}[Teorema de Liouville]Sea $\alpha$ un número algebraico de grado $n$ entonces para cualesquiera $c$ y $\epsilon$ reales positivos arbitrarios exite un número finito de racionales $p/q$ tales que 
+			$$ \left\lvert \alpha - \frac{p}{q}\right\rvert < \frac{c}{q^{n+\epsilon}} $$
+		\end{teor}
+		(No me digáis que la palabra {\rm cualesquiera} no tiene un sonido maravilloso {\rm cualesquiera, cualesquiera, \dots } dan ganas de escribir un verso: {\em cualesquiera que sean / los racionales / nunca de $\alpha$ cerca / podrás hallarles} ups! perdón que se me ha ido la olla, vuelvo a nuestro tema)
+		
+		\Pendt{hay una infinidad de maneras de meter $\Qalg$ en $\mathbb C$. mencionarlo aquí? }
+
+		\begin{teor}[Teorema de Roth (1952)]Sea $\alpha$ un número algebraico de grado $n$ entonces para cualesquiera $c$ y $\epsilon$ reales positivos arbitrarios exite un número finito de racionales $p/q$ tales que 
+			$$ \left\lvert \alpha - \frac{p}{q}\right\rvert < \frac{c}{q^{2+\epsilon}} $$
+		\end{teor}
+		
+		\begin{teor}[\em Gelfond y Schneider (19??)] Si $\alpha$ un número algebraico de grado ... \end{teor}
+	\end{nota}
+
+\subsection{Polinomio mínimo}
+
+	Todo lo que tenemos para agarrarnos con la definición de número algebraico es que verifica un polinomio con coeficientes enteros, resulta por lo tanto completamente natural que intentemos explotar este concepto todo lo posible antes de atacar otras ideas. Empezamos primero investigando una propiedad fundamental de los polinomios con coeficientes en un cuerpo, similar al teorema fundamental de la aritmética pero para polinomios:. 
+	
+	\enun{PMin:1}{Un polinomio con coeficientes racionales puede escribirse de forma única como producto de polinomios irreducibles}
+	
+	Un par de comentarios a hacer antes de comenzar la demostración: hemos enunciado el teorema en condiciones enormemente restrictivas, en realidad el teorema es cierto para polinomios con coeficientes en cualquier UFD (UFD={\em Unique factorization domain}, no, no estoy hablando de OVNIS). Además, no sólo el teorema sigue siendo cierto en otros entornos sino que lo vamos a necesitar, pero para entonces buscaré una demostración que sirva para ese caso.  
+	
+	Desde el punto de vista de la aritmética de polinomios, las constantes no cero del cuerpo base (por ejemplo los racionales) son {\em unidades}, aún más son las únicas unidades. Esto nos permite centrarnos en polinomios mónicos, es decir cuyo coeficiente del término principal es 1, esto no supone ninguna limitación (desde el punto de vista de factorización) ya que basta con dividir todos los coeficientes por el coeficiente principal, y obtenemos un polinomio mónico. Lo que nos permite demostrar fácilmente el teorema fundamental de la aritmética para polinomios es un procedimiento similar a la división de Euclides, 
+	
+	\enun{PMin:2}{ Dados polinomios $f$ y $g$ existe un polinomio $q$, y un polinomio $r$ tales que
+		$$ f = qg + r \quad\quad \text{y} \quad \deg r < \deg g $$
+	}
+	
+	Utilizando este resultado y un argumento idéntico al que se utiliza para los números naturales podemos demostrar \refenun{PMin:1}. Vemos que hemos sustituido el tamaño (resto menor que cociente) por el grado (grado del resto menor que grado del cociente) pero esto es suficiente ya que es todo lo que necesitamos para demostrar que dos polinomios tienen un máximo común divisor, \dots \Pendt{(no se si vale la pena enrrollarse aquí)}.
+
+	\begin{nota}{Algoritmo para determinar si un polinomio es irreducible y para factorizar.}
+		Existen algoritmos que nos permiten determinar si un polinomio dado es o no irreducible. El que voy a presentar no es muy rápido, por no decir que es más lento que una tortuga paralítica, pero tiene la virtud de ser bastante sencillo. Se llama el algoritmo de Schuber-Kronecker, y como mínimo nos muestra que el problema de factorizar un polinomio es mecanizable. La idea es la siguiente: Supongamos que queremos factorizar un polinomio $f(x)$ de grado $n$ con coeficientes racionales, entonces nos basta considerar polinomios con grados $m \le n/2$. Para cada valor de $m$ supongamos que existe un polinomio de grado $m$, $g(x)$ que divide a nuestro polinomio, elijamos $m+1$ puntos digamos $0,1,2,\dots,m$, entonces
+			$$ g(t) \vert f(t) \quad \operatorname{para } t= 0,1,2,\dots,m $$ 
+		luego nos basta enumerar todos los divisores de $f(t)$ para cada valor de $t$, y para cada combinación de divisores $d_t \Divide f(t)$, interpolar el polinomio que toma los $m+1$ valores $d_t$ en los puntos $t=0,1,2,\dots,m$, y comprobar si divide exactamente a $f$. Incluso para valores muy pequeños de $n$ este es un trabajo ímprovo. Para acelerarlo conviene buscar valores de $t$ que den lugar a valores primos, si es posible, y aún así el trabajo es monstruoso, pero nadie a dicho que fuera a ser rápido.
+		
+		Otros algoritmos mucho más rápidos también dependen de ser capaz de factorizar, ¿hay algún algoritmo que permita determinar la irreducibilidad de un polinomio con coeficientes racionales, más sencillo que factorizarlo? Esta pregunta tiene mala contestación ya que existe un algoritmo polinomial para la fatorización de polinomios, luego lo de ``más fácil'' no parece ``fácil''  de definir.
+	\end{nota}
+	
+	Bien ahora ya estamos preparados para definir el polinomio mínimo de un número algebraico, si $\alpha$ es un número algebraico, sea $h(\alpha)=0$ con $h(x)$ un polinomio mónico con coeficientes racionales, existe entonces al menos un factor irreducible de $h(x)$ que se anula en $\alpha$, (en caso contrario poniendo $h(x)=f(x)g(x)$ tendríamos $f(\alpha)g(\alpha)= 0$ con $f(\alpha)$ y $g(\alpha)\ne 0$, lo que es imposible). Ahora supongamos que $f(x)$ es un polinomio irreducible con $f(\alpha) = 0$, y sea $h(x)$ otro polinomio con coeficientes racionales que se anula en $\alpha$, entonces $f(x)\vert h(x)$, pues en otro caso usamos el algoritmo de Euclides para encontrar el gcd de $f(x)$ y $h(x)$, digamos $g(x)$, entonces $g(x)$ sería un divisor propio de $f(x)$ contradiciendo el que $f(x)$ es irreducible. Como consecuencia de esta discusión existe un único polinomio mónico irreducible que se anula en $\alpha$, y a este polinomio le llamamos el polinomio mínimo de $\alpha$.
+	
+	\begin{nota}{Extensiones finitas de cuerpos}
+		Voy a hacer un pequeño inciso algo más abstracto, con gran dolor de mi corazón por que seguro que me pierdo. Dado un cuerpo $k$ podemos extender la noción de polinomio mínimo a polinomios de $k[t]$, irreducibles sobre $k$, y el de números algebraicos a {\em números algebraicos sobre $k$}, en ambos casos debido principalmente a que $k[t]$ es también un UFD \Pdte{pensar}. Podemos extender el cuerpo $k$ agregando una raiz de un polinomio irreducible $P(t)$ considerando los polinomios módulo $P(t)$, de forma que dos polinomios son iguales si su diferencia es divisible por $P(t)$. Es inmediato que $k[t]/P(t)$ es un anillo conmutativo, y que no tiene divisores de cero (si $p(x)q(x) = 0$ y ni $p$ ni $q$ son divisibles por $p$ entonces $(p(x),P(x))(q(x),P(x))= 0$ nos da una factorización no trivial de $P$ contradiciendo el que es irrreducible). Vamos a ver que $k[t]/P(t)$ es en realidad un cuerpo, para lo cual sólo tenemos que comprobar que cada elemento es invertible. 
+	\end{nota}
+
+\subsection{Funciones simétricas}
+
+	Por el teorema fundamental del álgebra, un polinomio mónico con coeficientes racionales
+		$$ A(x) = x^n + \sigma_1 x^{n-1} + \dots + \sigma_{n-1} x + \sigma_n $$
+	lo podemos escribir como producto de monomios 
+		$$ A(x) = \prod_{i \le n} (x - \alpha_i) $$
+	si desarrollamos el producto obtenemos
+		\begin{align*}
+			\sigma_1 &= -(\alpha_1 + \alpha_2 + \dots + \alpha_n) \\
+			\sigma_2 &= (-1)^2 \sum_{1 \le i < j \le n} \alpha_i\alpha_j\\
+				&\cdots\\
+			\sigma_{n-1} &= (-1)^{n-1} \sum_{i\le n} \alpha_1 \dots \alpha_{i-1}\alpha_{i+1} \dots \alpha_n \\ 
+			\sigma_n &= (-1)^n \alpha_1 \alpha_2 \dots \alpha_n\\ 
+		\end{align*}
+	la propiedad conmutativa del producto nos muestra que si consideramos los $\sigma_i$ como funciones en las $n$ variables $\alpha_1, \dots, \alpha_n$, el valor de la función es independiente del orden de las variables. A las funciones con esta propiedad les llamamos funciones simétricas. A las funciones $\sigma_1,\dots,\sigma_n$ les llamamos funciones simétricas elementales, la razón de ese nombre es la misma por la que hemos cortado el rollo de los números algebraicos y nos hemos puesto a hablar de ellas: 
+
+	\begin{teor}[Teorema de las funciones simétricas]\label{FSym:1}
+		Todo polinomio simétrico en las variables $\alpha_1 \dots, \alpha_n$ con coeficientes enteros puede escribirse como un polinomio con coeficientes enteros en las variables $\sigma_1, \sigma_2, \dots, \sigma_n$. 
+	\end{teor}
+
+	Nota: podemos sustituir el ``coeficientes enteros'' por ``coeficientes en un anillo conmutativo $R$'' sin que la demostración cambie. Pero yo debo tener alma de ingeniero, un matemático de verdad expresaría el teorema en su ámbito más general. 
+
+	Para dar un ejemplo consideremos la expresión $d = (x-y)^2$, claramente el valor no cambia si permutamos $x$ e $y$, por lo que es una función simétrica en las variables $x$ e $y$ luego podemos expresarla como un polinomio en $\sigma_1$ y $\sigma_2$, efectivamente
+		$$ (x-y)^2 = x^2 -2xy + y^2 = (x+y)^2 - 4xy = \sigma_1^2 - 4 \sigma_2 $$
+
+	Observemos que lo que pedimos a la función simétrica es que cualquier permutación de las variables de exactamente el mismo polinomio. El problema de determinar si para un polinomio $P$, si para todos los valores posibles de las variables se tenga $P(x_1, \dots, x_n) = 0$, implique que $P$ es igual a cero, no forma parte del enunciado y no estoy ni mucho menos seguro de que sea cierto en general (creo que al menos esto es cierto en cuerpos de números, pero no estoy seguro. \Pendt{Estudiar este problema.}
+
+	Representemos por $[k_1,k_2,\dots,k_n]$ con 
+		\eq{FSym:2}{k_1\ge k_2\ge \dots\ge k_n\ge 0}
+	la función simétrica compuesta por todos los términos distintos que pueden obtenerse permutando las variables $x_1,\dots,x_n$ en
+		$$ x_1^{k_1} x_2^{k_2} \dots x_n^{k_n} $$
+	por ejemplo en esta notación las funciones elementales son simplemente:
+		$$\sigma_1 = [1,0,\dots,0], \sigma_2 = [1,1,0,\dots,0], \dots ,\sigma_n = [1,1,\dots,1] $$
+	y el discriminante del polinómio cuadrático que acabamos de encontrar es
+		$$ [2,0]-2[1,1] $$
+	Está claro que cualquier polinomio simétrico lo vamos a poder escribir como suma de monomios. 
+	La demostración del teorema de las funciones simétricas es muy sencillo si observamos que al escribir como suma de monomios el producto de funciones simétricas:
+		$$S= \sigma_n^{k_n}\sigma_{n-1}^{k_{n-1}-k_n} \dots \sigma_1 ^{k_1-k_2} $$
+	el término mayor lexicográficamente es
+		$$ [k_1,k_2,\dots,k_n]$$ 
+	y todos los demás son estrictamente menores. De forma que dado un polinomio simétrico $P$, digamos
+		$$ P = a M + \text{t\'erminos menores lexicogr\'aficamente} $$
+	entonces $P-S$ es un polinomio simétrico cuyo máximo monomio es escrictamente menor lexicográficamente que el de $P$. Obviamente en un número finito de pasos obtenemos una expresión:
+		$$ P - aM - a'M' + \dots = 0 $$
+	donde $M,M',\dots$ es una sucesión estrictamente decreciente de monomios simétricos. 
+
+	Vamos a calcular como ejemplo, el discriminante de la ecuación cúbica
+		$$ D = (x-y)^2(y-z)^2(z-x)^2$$
+	por simple inspección vemos que 
+		$$ D = [420] - 2 [411] -2 [330] + 2[321] -6 [222] $$
+	el monomio de mayor grado es $[4,2,0]$ luego restando $$\sigma_1^2\sigma_2^2 = [420] + 2[411] + 2[330]+8[321]+15[222] $$
+	eliminamos este término, y nos queda
+		$$ D = \sigma_1^2\sigma_2^2 - 4 [411] -4 [330] -6[321] -21 [222] $$
+	Ahora sumamos cuatro veces
+		$$ \sigma_3 \sigma_1^3 = [411] + 3[321] + 6[222]$$
+	y obtenemos
+		$$ D = \sigma_1^2\sigma_2^2 -4\sigma_1^3\sigma_3 -4 [330] +6[321] +3 [222] $$
+	ahora
+		$$ \sigma_2^3 = [330]+3[321]+ 6[222] $$
+	Obteninedo 
+		$$ D = \sigma_1^2\sigma_2^2 -4\sigma_1^3\sigma_3 -4\sigma_2^3 +18[321] +27[222] $$
+	El mayor término es ahora 
+		$$ \sigma_1\sigma_2\sigma_3 = [321]+3[222] $$
+	luego
+		$$ D = \sigma_1^2\sigma_2^2 -4\sigma_1^3\sigma_3 -4\sigma_2^3 + 18\sigma_1\sigma_2\sigma_3 - 27[222] $$
+	y ya hemos terminado pues $[222] = \sigma_3^2$ es decir
+		$$ D = \sigma_1^2\sigma_2^2 -4\sigma_1^3\sigma_3 -4\sigma_2^3 + 18\sigma_1\sigma_2\sigma_3 - 27\sigma_3^2 $$
+	que es la expresión del discriminante de un polinomio cúbico en los coeficientes del polinomio.
+
+\subsection{Aplicaciones}
+
+	Vamos a dar unas cuantas aplicaciones del teorema de las funciones simétricas a nuestro problema:
+
+	\enun{FSym:3}{ La suma y el producto de números algebraicos es algebraico}
+	Basta considerar los polinomios $\prod(x-\alpha-\beta)$ y $\prod(x-\alpha\beta)$ donde $\alpha$ y $\beta$ recorren las raices de los polinomios que definen nuestro números algebraicos. Claramente son funciones simétrias en las raices de los correspondientes polinomios y por lo tanto pueden escribirse en función de sus coeficientes, que son racionales.  
+
+	Aunque no sea una sorpresa, no etá muy claro como se puede demostrar esto sin usar el teorema de las funciones simétricas o algo equivalente. Más adelante quizás veremos otra demostración pero no tengo nada claro que sea más sencilla.
+
+	Como complemento al último resultado vemos que si $\alpha\ne 0$ es una raiz del polinomio $P(x)$ de grado $n$, entonces $1/\alpha$ es una raiz del polinomio $x^nP(1/x^n)$. Como consecuencia {\em los números algebraicos forman un cuerpo $\Qalg$, que es el mínimo cuerpo algebraicamente cerrado que contiene a $\Q$}.
+
+	Ahora vamos a probar uno de los resultados fundamentales que soportan la teoría de Galois. Puede parecer inocuo pero es de ...
+
+	\begin{teor}[Teorema del elemento primitivo] 
+		Sean $\alpha$ y $\beta$ números algebraicos entonces existe un número algebraico $\theta$ y polinomios $P$ y $Q$ tales que 
+		$ \alpha = P(\theta)$ y $\beta = Q(\theta)$.
+	\end{teor}
+
+	Uno puede preguntarse con razón que cual es el objeto de este teorema y por que nos hemos molestado en darle un nombre. La razón es que dentro de poco nos van a interesar (y mucho) cuando estudiemos todas las expresiones que pueden formarse evaluando polinomios con coeficientes racionales en números algebraicos. Pero así a bote pronto podemos decir que es uno de los puntales de la teoría de Galois. 
+
+	Para demostrarlo consideramos las expresiones de la forma 
+		$$ \prod (a \alpha^{(i} + b \beta^{(j}) $$ 
+	donde $\alpha^{(i}$ y $\beta^{(j}$ 
+
+>>>>> Aplicacion básica 
+
+(N1) Un resultado de la teoría de grupos, que creo puede ser útil para entender $K(\alpha,\beta)$: {\em 
+	Sea $N$ un subgrupo normal de $G$, y $H$ un subgrupo de $G$, entonces: }
+		$$ \abs{  HN } = \frac{\abs{H}\cdot\abs{N}}{\abs{H\cap N}} $$
+
+(N2) Es importante recopilar algunos resultados sobre como estudiar los grupos de orden finito. Al final vaolveré a ellos por un camino o por otro. 
+
+
+
+\section{Enteros Algebraicos I}
+	Cuando el polinomio mónico mínimo de un número algebraico tiene todos sus coeficientes enteros racionales, entonces decimos que es un entero algebraico. Observemos que es una generalización natural de entero, que sería una raíz de un polinomio mónico de grado 1, $x-\alpha$. En el acercamiento más moderno a los enteros algebraicos, en vez de usar los enteros racionales permitimos cualquier anillo de integridad conmutativo $R$, y decimos que un número $\alpha$ es un entero sobre $R$ si es raiz de un polinomio mónico con coeficientes en $R$, este polanteamiento es más general ya que nos permite por ejemplo definir los números algebraicos como {\em enteros sobre $\Q$.} 
+	
+	El problema con esta definición es que puede parecer algo arbitraria, nos gustaría tener una definición de entero que sea algo más intrínseca. Esto lo conseguiremos algo más adelante cuando hablemos de anillos de Dedekind, que tienen la propiedad de ser los anillos más pequeños en los que se cumplen una serie de propiedades interesantes. Por el momento nos vamos a conformar con la definición anterior. 
+	
+	\enun{EA:1}{Las siguientes condiciones son equivalentes: (a) $\alpha$ es un entero algebraico sobre $R$, (b) $R[\alpha]$ es un $R$-módulo finitamente generado, (c) Hay un anillo $R'$ que contiene a $R$ y a $\alpha$ que es finitamente generado como $R$-módulo. }
+	Para demostrarlo vemos que (a)$\implies$(b) es obvio ya que $\alpha^m$ lo podemos escribir en términos de las primeras $\deg \alpha$ potencias de $\alpha$, luego $R[\alpha]$ es finitamente generado. (b)$\implies$(c) también es obvio, ahora sea (c) cierto y tomemos generadores $y_1, \dots, y_n$ de $R'$ sobre $R$. Como $\alpha \in R'$ tenemos 
+		$$ \alpha y_i = \sum a_{ij} y_j $$
+	donde los $a_{ij} \in R$, y por algebra lineal esto es posible sólo si 
+		$$\det (\alpha I-a_{ij}) = 0$$ 
+	pero este determinante es un polinómio mónico con coeficientes en $R$ (el polinomio característico de la matriz), luego $\alpha$ es un entero algebraico sobre $R$ como queríamos ver.
+	
+	Esta visión de los enteros algebraicos como endomorfismos de anillos es muy conveniente, y hace muy sencillas las demostraciones de otros resultados. En otras palabras podemos llamar enteros algebraicos sobre $R$ a los autovalores de matrices con coeficientes en $R$. esta es una representación que puede resultar muy conveniente en algunos casos desde el punto de vista algorítmico para representar al entero algebraico.
+	
+	Antes que nada es importante tener una noción que nos permite asegurar que tenemos ya todos los enteros dentro de un anillo, Sea $R'$ un anillo y $R$ un subanillo de $R'$, decimos que $R$ es integralmente cerrado si todo elemento de $R'$ entero sobre $R$ está en $R$. El cierre integral de un dominio de integridad $R$ es el conjunto de elementos de su cuerpo de fracciones que son enteros sobre $R$. La cuestión clave es que ésta es una noción estable:
+
+	\enun{EA:2}{Si $\beta$ es entero sobre $R[\alpha]$ y $\alpha$ es entero sobre $R$ entonces $\beta$ es entero sobre $R$.} Pues sea $r_k$ un base de $\alpha$ sobre $R$ y $s_l$ una base de $R[\alpha][\beta]$ sobre $R[\alpha]$, entonces claramente $r_ks_l$ genera $R[\alpha][\beta]$ sobre $R$. Observemos que de aquí se deriva inmediatamente que {\em si $\alpha$ y $\beta$ son enteros sobre $R$ también lo son $\alpha+\beta$ y $\alpha\beta$}, ya que son trivialmente elementos de $R[\alpha][\beta]$. Por lo tanto el enunciado puede ampliarse de números a anillos: {\em Si $R''$ es entero sobre $R'$ y $R'$ es entero sobre $R$ entonces $R''$ es entero sobre $R$}. En particular si un entero algebraico es un número racional entonces es un entero racional. 
+	
+	\enun{EA:3}{Si $R'$ es un dominio de integridad entero sobre $R$ entonces $R'$ es un cuerpo si y sólo si $R$ es un cuerpo.} Sea $\alpha\in R'$ distinto de cero entonces $\alpha R[\alpha]$ es una transformación lineal inyectiva sobre $R[\alpha]$ y que es por lo tanto suprayectiva, luego existe $\beta$ tal que $\alpha\beta = 1$, y por lo tanto $\alpha$ es invertible en $R'$ y $R'$ es un cuerpo. Recíprocamente si $R'$ es un cuerpo entonces cada $a \in R$ tiene un inverso en $R'$, $a^{-1}$, que verifica una ecuación polinómica 
+		$$ a^{-n} + b_{n-1}a^{-(n-1)} + \dots + b_0 = 0$$
+	y multiplicando por $a^{n-1}$ tenemos
+		$$ a^{-1} = - b_{n-1} + \dots + b_0 a^{n-1}$$
+	pero el lado derecho está en $R$ luego $a^{-1} \in R$ y $R$ es un cuerpo. 
+	
+	Todo lo anterior es muy bonito pero nos estamos alejando de lo que realmente nos interesa es decir los números y enteros algebraicos sobre $\Q$. Voy a volver a centrarme en este caso, aunque la generalización a otros anillos y cuerpos más generales será normalmente trivial (y en caso contrario con algo de suerte lo comentaremos). Vamos a recorrer primero algunos resultados, muy fáciles pero muy prácticos. 
+	\enun{EA:5}{Dado un número algebraico $\eta$ existe un entero algebraico $\eta'$ tal que $\eta\eta'$ es un entero racional.} Pues si $x^n + a_1x^{n-1}+\dots+a_{n-1}x+a_n$ es el polinomio mínimo de $\eta$, entonces como $P(\eta) = 0$ y tenemos
+		$$ a_n = \eta( -\eta^{n-1} - a_1\eta^{n-2} - \dots - a_{n-1}) = \eta\eta' $$
+	El término $a_n$ se llama {\em norma absoluta} de $\eta$ sobre $\Q$, y resultará útil en algunos argumentos en el futuro.
+	
+	Estamos acostumbrados a quitar denominadores para quedarnos con números enteros, y afortunadamente esto sigue siendo posible cuando estamos habado de números algebraicos, 
+	\enun{EA:4}{Dado un número algebraico $\alpha$ existe un entero algebraico $a$ tal que $a\alpha$ es un entero algebraico.} Es decir podemos quitar denominadores, . 
+
+
+\section{Geometría de números}
+	Han descrito la geometría de los números como un sofisticación del principio de las cajas de Dirichlet, pero si es así permite hacer cosas bastante impresionantes con relativamente poco esfuerzo. 
+
+	Ya nos hemos encontrado retículos al intentar visualizar los enteros algebraicos como espacios vectoriales de dimensión $n$. Esta visualización es muy útil por que nos permite acceder resultados geométricos, \dots 
+	
+	Podemos representar un entero algebraico $\alpha$ en el espacio vectorial $\R^{r_1}\C^{r_2}$ enviándole al punto 
+		$$ ( \alpha^{(1}, \dots, \alpha^{(r_1}, \alpha^{(r_1+1}, \dots, \alpha^{(r_1+r_2}) $$ 
+	ya que podemos obviar los restantes $r_2$ conjugados por ser conjugados complejos de los otros. El espacio resultante es claramente isomorfo a $\R^n$, como espacio vectorial, donde un posible isomorfismo consiste en enviar cada conjugado complejo de un entero algebraico el par de números reales formado por sus partes real e imaginaria. 
+	
+	La clave de esta representación de los enteros algebraicos de un cuerpo es que forman un retículo $\Lambda \subset \R^n$, es decir un subgrupo discreto de rango $n$ que genera $\R^n$.\footnote{En realidad dos de estas propiedades implican la tercera, ver \cite{CohenNTI} prop. 2.3.1}, por ejemplo un subgrupo discreto de $\R^n$ que genera $\R^n$ tiene rango $n$. 
+
+	%\begin{figure}[h]\label{fig:sqrt2}\caption{El retículo de enteros de $\Q[\sqrt{2}]$.} 
+	\begin{tikzpicture}[scale=0.8]
+		% set dimensions
+		\clip (-2.5,-4.5) rectangle (4.5,2.5);
+		% Draw axes
+		\draw [->] (-5,0) -- (5,0);
+		\draw [->] (0,-5) -- (0,5);
+		\draw[step=1cm,gray,very thin] (-5,-5) grid (5,5);
+		\draw[xstep=1.4142cm,ystep=2cm,thin,red] [rotate=45](-6,-6) grid (6,6);
+		\filldraw[fill=green!30,rotate=-45] (0,0) rectangle (2,1.4142);
+		\filldraw[fill=red!30] (0,0) rectangle (2.4142cm,-.4142);
+		% pts and labels		
+		\draw[fill=red, anchor=north] (0.4142,-2.4142) circle (2pt) node {$-1+\sqrt{2}$};
+		\draw[fill=red, anchor=west] (1.4142,-1.4142) circle (2pt) node {$\sqrt{2}$};
+		\draw[fill=red, anchor=south] (1,1) circle (2pt) node {$1$};
+		\draw[fill=red, anchor=west] (2.4142,-0.4142) circle (2pt) node {$1+\sqrt{2}$};
+		\draw (0,0) circle (1.8072cm);
+	\end{tikzpicture}
+	%\end{figure}
+	
+	En la figura he mezclado varios conceptos relativos al cuerpo $K=\Q[\sqrt{2}]$. Por un lado mostramos el retículo de los enteros algebraicos que tiene por base $1$ y $\sqrt{2}$. A cada entero $\alpha \in \Z_K$ le hacemos corresponder el punto del plano $(\alpha,\alpha')$. La forma matricial de la base entera es por lo tanto 
+		$$ ({\bf b}_1,{\bf b}_2) = \begin{pmatrix} 1 & \sqrt{2} \\ 1 & -\sqrt{2}\end{pmatrix}$$ 
+	que tiene determinante, el volumen de un paralelogramo fundamental (verde en la figura) 
+		$$ \Delta = \operatorname{det} ({\bf b}_1,{\bf b}_2) = -2\sqrt{2} $$
+	El rectángulo determinado por los ejes y las proyecciones de un punto sobre ellos, delimitan un recángulo (en la figura el rectángulo rojo para el punto $1+\sqrt{2}$) cuya área es la norma del número algebraico. Observemos que el área es con signo, luego en este caso $\N{(1+\sqrt{2})} = -1$. 
+
+\subsection{El teorema de Minkowski}
+	El siguiente resultado es extraordinariamente útil, como vamos a ver múltiples veces, dice lo siguiente,
+	
+	\begin{teor}[Teorema de Minkowski] Dadas 
+
+
+
+
+\section{El discriminante}
+	Voy a intentar dar una justificación de la importancia del discriminante y de su relación con los primos ramificados. Supongamos primero que $\O_K = \Z[\alpha]$ para cierto entero algebraico $\alpha$, es decir que $\O_K$ admite una base formada por las potencias de un elemento. Sea $f(x)$ el polinomio mínimo de $\alpha$, el discriminante del polinomio $f$ se 	corresponde con el del anillo de enteros de $K$, pero
+		$$ \operatorname{disc} f = \prod_{i \ne j}(\alpha^{(i}-\alpha^{(j}) $$
+	algo más adelante veremos varias definiciones alternativas del discriminante, pero por el momento esta esta bien. La cuestión es que como es una función evidentemnte simétrica de las raices, que se anula si dos (o más) de las raices son iguales. Como función simétrica es un polinomio con coeficientes enteros en los coeficientes del polinomio mínimo, y por lo tnato un número entero. 
+	
+	Supongamos entonces que $p\vert D$ es divisor primo del discriminante, entonces reduciendo módulo $p$ tenemos
+		$$ \operatorname{disc} f \equiv 0 \pmod{p} $$
+	
+	
+	
+
+\section{Enteros Algebraicos II}
+	Como hemos visto en el capítulo anterior, dados entero algebraicos $\alpha$ y $\beta$ podemos encontrar con facilidad cuerpos de números en los que $\alpha$ y $\beta$ tengan un máximo común divisor. Nos gustaría encontrar un cuerpo lo más natural posible que contenga $\alpha$, $\beta$, y su máximo común divisor. Claramente hay iunfinitos, ya que cualquier asociado del máximo común divisor es también un máximo común divisor. Es lógico por lo tanto pensar en si podemos definir un cuerpo en el que el el máximo común divisor se integre de forma más natural. 
+	
+	Observemos que la pregunta tiene truco, ya que podríamos considerar también cualquiera de los asociados de $\alpha$ y $\beta$ y los cuerpos que generen y buscar un cuerpo natural en el que los tres convivan etc ... 
+	
+	La cuestión de si existe un cuerpo o conjunto de cuerpos natural para un número es difícil de contestar, el que el cuerpo no es único es evidente en el caso de $\alpha = \sqrt[3]2$, en el que tenemos tres cuerpos isomorfos $\Q[\zeta \alpha]$ y $\Q[\zeta^2 \alpha]$, con $\zeta = e^{2\pi i/3}$ una raiz primitiva cúbica de la unidad. Pero estos cuerpos no son únicos, por ejemplo $2+\sqrt[3]6$, y en general $2m + \sqrt[3]{8m^3-2}$ son asociados de $\sqrt[3]2$ luego hay una infinidad de cuerpos cúbicos que continene un asociado suyo. Este fenómeno posiblemente esté ligado a que $\sqrt[3]2$ es un primo ramificado, así que vamos a ver otros casos. 
+
+	Vamos a poner otro ejemplo, en este caso una conjetura, consideremos el primo de Gauss $2+i$, claramente $(2+i)(2-i) = 5$ luego $2+i$ es un divisor de 5. La conjetura es que si $2+i \vert \beta$ para un entero algebraico $\beta$ entonces bien $5 \vert \beta$, bien $Q[i] \subset Q[\beta]$. Mi conjetura es más amplia pero voy a empezar enunciándola en una versión muy sencilla. 
+	
+	\begin{idea}
+		Sea $\pi$ un entero algebraico tal que su norma absoluta es un primo racional $p$, y tal que $\pi^2\not\vert p$, y supongamos que $\pi \vert \beta$ donde $\beta$ es un entero algebraico arbitrario, sea $L:Q$ el cierre de Galois de $\Q[\beta]$, y sea $K = \Q[\pi] \cap L$ entonces $\N_{\Q[\pi]:K} \pi$, divide a $\beta$.
+	\end{idea}
+	
+	En el caso de que $\pi$ y $\beta$ sean cuerpos cuadráticos la demostración es fácil pero farragosa, basta encontrar una base entera de $\Q[\pi,\beta]$, y observar que si $p \vert \pi'\beta$ entonces $p\vert \beta$.
+	
+	Vamos a poner un ejemplo algo más sutil, consideremos el cuerpo $k=\mathbb Q[\sqrt{-5}]$, los números $3$ y $2+\sqrt{-5}$ son irreducibles en este cuerpo con norma igual a 9. El cuerpo de clase de Hilbert es $H = k[i] = \Q[\sqrt 5,i]$, pongamos $\rho = (1+\sqrt{5})/2$, la razón aurea;  en $H$ tenemos las factorizaciones 
+		$$ 2+\sqrt{-5} = i(\rho - i\rho')^2 \quad\quad 3 = (\rho - i\rho')(\rho +i\rho') $$
+	claramente tenemos que $(3,2+\sqrt{5}) = (\rho -i/\rho)$ ya que los cofactores verifican (buscar la ec de Bezout). El primo $\rho-\tfrac i\rho$ es un primo semi-inerte, ie tiene norma 9.
+
+	Ningún otro de los dos subcuerpos de $H$: $Q[i]$ o $Q[\rho]$ tiene un elemento de norma divisible por 3 (no trivial), ésto quizás es lo que produce parte del descalabro de este cuerpo que se usa sistemáticamente como ejemplo de cuerpo sin factorización única. 
+	
+	Ahora el problema aparece cuando intentamos encontrar otro cuerpo en el que el ideal $(3,2+\sqrt{-5})$ se convierta en principal. Usando la técnica de Hecke, ponemos 
+		$$\lambda = \sqrt{2+\sqrt{-5}} = \frac{\sqrt{10} + i\sqrt{2}}2, $$
+	entonces $\lambda$ es una raiz del polinomio 
+		$$ \lambda^4 -4 \lambda ^2 +9 $$ 	
+	Sea $K = k[\lambda] = \mathbb Q[\lambda]$, vemos que $K = k[\sqrt{-2}]$. Por la teoría de géneros sabemos que ninguno de los primos $p \equiv 7,20 \pmod{20}$, está representado por la forma principal, sin embargo sus cuadrados si lo están, pongamos
+		$$ p^2 = a^2 + 5b^2 $$,
+	entonces (creo)
+		$$ \sqrt{ a + b\sqrt{-5}} \in K $$
+	En este cuerpo vemos que 
+		$$(3,2+\sqrt{5}) = (\lambda) $$
+	por la unicidad del gcd el cociente de ambos debe ser un entero de hecho:
+		$$ \frac{ \rho + \frac{i}{\rho} }{ \lambda } = 
+		  \frac{1}{2} ( \sqrt{2} + \sqrt{-2} )
+		$$
+	que es efectivamente una unidad (de un cuerpo intermedio entre ambos). Cabe preguntarse si podemos encontrar asociados de $\lambda$ en otros cuerpos.
+	
+	Aquí aparecen varias preguntas. 
+	\begin{enumerate}
+	\item Aparentemente no importa por que elemento $\mathfrak p^2 = \alpha$ empecemos, (con $\mathfrak p$ no principal) el cuerpo de Hecke es el mismo. 
+	\item La razón del punto anterior puede ser que 
+	\item Pongamos $\beta = \sqrt{ (2+\sqrt{5}) a})$ donde $a \in Q\sqrt{5}$ coprimo con 3, entonces nuestro primo $\lambda$ es un divisor de cualquier número de la forma $3a + b\beta$, (por decir solo algunos), esto implica que $\lambda$ tiene múltiplos no triviales en una infinidad de cuerpos bicuadráticos. 
+	\item La sensación que tengo es que tenemos que tratar nuestro primo como un primo que splits completely pero del cuerpo $\Q[\sqrt{-5}]$. Sí me gustaría sin embargo determinar si $H$ y $K$ tienen alguna relación especial con los cuerpos en los que aparecen múltiplos de $\lambda$. 
+	\end{enumerate}
+
+\begin{nota}
+Me ha sorprendido un resultado que aparece en \cite{Cohen:NTI}, del que se deduce que las unidades en extensiones abelianas de $\Q$ son esencialmente reales, para ser más preciso cada unidad en una extensión abeliana de $\Q$, puede escribirse como el producto de una raiz de la unidad por una unidad real, (no necesariamente en la extensión original). En particular para cualquier unidad $\epsilon$ existe un $n$ tal que $\epsilon^n \in \R$. 
+
+Esto no puede trasladarse (trivialmente a extensiones no abelianas, veaoms un ejemplo: si $\alpha = \sqrt[3]2$, en el cuerpo $\Q[\zeta\alpha]$ la unidad $\epsilon = \zeta\sqrt[3]2-1$ es una unidad fundamental de $\Q[\alpha]$, pero si para algún $m\ne 0$, se tiene  $\alpha^m \in \R$ entonces tendríamos elementos reales en un cuerpo puramente complejo (los únicos elementos reales son los racionales). 
+
+Si existe un orden en las unidades de las extensiones no abelianas son mucho más difíciles de caracterizar, habría que mirar como funcionan las unidades en las extensiones relativas de cuerpos imaginarios dadas por sus cuerpos de Hilbert. Sería interesante ver si hay algún orden. Por otro lado resulta natural preguntarse cual es la relación entre las unidades $\alpha-1$,$\zeta\alpha-1$ y $\zeta^2\alpha-1$. Observemos que siendo conjugadas en principio son prácticamente idénticas(indistinguibles desde el punto de vista de la teoría de cuerpos).
+
+Sea $K/\Q$ una extensión de Galois totalmente compleja. Entonces la conjugación compleja $\sigma$ es un automorfismo del grupo de Galois, y genera un subgrupo de orden 2, el subcuerpo $K^\sigma$ de $K$ fijado por este subgrupo es por lo tanto real, (no es necesariamente totalmente real como demuestra el caso de la extensión $\Q[\sqrt{3}2,\zeta_3]$), y de orden $n/2$, si $U_K$ es el grupo de unidades de $K$, y $U_F$ es el grupo de unidades de $F$, podemos escribir 
+	$$ U_K \isom \Z/2\times T \times \Z^r $$
+donde $r = n/2-1$, y $T$ es un subgrupo de raíces de la unidad complejas. mientras que $U_F$ siendo real es de la forma 
+	$$ U_F \isom \Z/2 \times \Z^r $$
+luego $U_F < U_K$, es un subgrupo del mismo rango. El primer párrafo de la nota indica que $[U_K/T:U_F] = 1$ cuando $K$ es una extensión abeliana, y me pregunto qué se sabe para exnsiones no abelianas. 
+\end{nota}
+
+
+\section{El máximo común divisor}
+	Sean $\alpha$ y $\beta$ números algebraicos, vamos a demostrar que existe un entero algebraico $\delta$, único módulo asociados, y tal que $\delta \vert \alpha$ y $\delta \vert \beta$ y si $\delta'$ es otro entero algebraico con $\delta'\vert\alpha$ y $\delta'\vert\beta$ entonces $\delta' \vert \delta$. Además existen enteros algebraicos $\mu$ y $\nu$ tales que
+		$$ \alpha \mu + \beta \nu = \delta $$
+	en otras palabras:
+	\enun{EA:GCD}{Dos enteros algebraicos tienen un máximo común divisor que es una combinación lineal entera de ellos.} 
+	
+	\begin{nota}{Nota}La demostración es muy enrevesada. Por el momento lo mejor que conozco pasa por demostrarlo es utilizar que el número de clase del cuerpo $\Q[\alpha,\beta]$ es finito. Ver \cite{Hecke:LTAN} en la página 107 (después del teorema 98) describe como encontrar un máximo común divisor de ideales no principales)\end{nota}
+	
+	Vamos a demostrar primero que podemos eliminar todos los factores comunes de $\alpha$ y $\beta$ de un grado dado sobre $\Q$. Supongamos que $0 < d < d' < d'' < \dots$  son todos los divisores comunes enteros racionales y positivos de $\alpha$ y $\beta$,  
+
+
+\section{Pari I. Numeros algebraicos en Pari}
+{\small
+\begin{verbatimtab}[2]
+		F = nfinit(X^2+5);
+	% aunque no te lo creas
+\end{verbatimtab}
+}	
+	
+	Si $k = \mathbb Q[\alpha,\beta]$ y ${\mathfrak a}_1 \dots {\mathfrak a}_k$ son una base del grupo de clase del cuerpo $K$, de forma que ${\mathfrak a}_i$ 
+	
+	
+	
+	
+	Una pregunta natural que surge es bajo que circunstancias un entero algebraico es un {\em divisor} de enteros algebraicos de otros cuerpos. En vista de la existencia de infinitos asociados de un número algebraico, tiene sentido preguntarse por aquellos que tienen grado mínimo sobre $\mathbb Q$, Sean $\alpha, \alpha', \dots$ y supongamos que su grado es $n$. Clasifiquémoslos por el cuerpo de grado $n$ al que pertenecen digamos $K_1, K_2, \dots$ cuerpos distintos. La pregunta es cuando aparecen infinitos cuerpos y cuando aparece sólo un número finito, y en este último caso cuántos aparecen y que relación tienen entre ellos.  
+	
+	Para dar ejemplos prácticos consideremos la siguiente definición, diremos que un entero $\pi$ es un divisor de un cuerpo $K$ de grado $n$ si existe algún entero irreducible $\alpha$ en $K$ con grado natural $n$ tal que $\pi \vert \alpha$. Diremos que no es un divisor de $K$ si siempre (if ever) que se tenga $\pi \vert \alpha$ existe un $\alpha' \vert \alpha$, de grado natural menor que $n$ tal que $\pi \vert \alpha'$. 
+	
+	Para entender estos conceptos lo mejor es dar algunos casos, el entero $\sqrt{3}$ es un divisor de cualquier cuerpo $\mathbb Q[\sqrt{3d}]$ para $(d,3)=1$. En particular tiene asociados no triviales en una infinidad otros cuerpos por ejemplo $\sqrt{-3}$, $3+\sqrt{6}$, $6 + \sqrt{33}$ $9 + \sqrt{78}$, etc ... vemos que todos ellos son asociados.
+	
+	De igual forma vemos que el entero $1+i$ es divisible por $\sqrt{2}$ ie 
+		$$  ((1+i)/sqrt{2})^2 = i $$
+	y luego $(1+i)/sqrt{2}$ es una raiz del polinomio $x^4+1$ y como en el caso anterior podemos encontrar una cadena infinita de primos con la misma propiedad. 
+	
+	Sin embargo hay primos que no tienen ese "problema", consideremos $\pi = 1+\sqrt{-2}$ de norma 3. supongamos que divide algún entero cuadrático de otro cuerpo, por ejemplo a 
+	  $$ \frac{ a + b \sqrt{D} }2, \quad D \equiv 0,1 \pmod{4} $$
+	entonces 3 es un divisor del entero cuadrático
+  	$$ \frac{ a - a \sqrt{2} +  b \sqrt{D} - b\sqrt{2D} }2 $$
+	podemos suponer que $3^2 \not \vert D$ así que vemos fácilmente que $(ab,3)=1$, y usando el resultado de Williams que caracteriza las bases entereas de los cuerpos bicuadráticos obtenemos fácilmente que $1+\sqrt{-2}$ no es divisor de ningún otro cuerpo aparte de sí mismo.   	
+	 
+	Observemos que las unidades son por definición divisoras de todos los cuerpos. 
+	
+	Vamos a poner un ejemplo algo más sutil, ya que tenemos una infinidad de cuerpos, pero el número en cuestión es primo con el discriminante, consideremos el cuerpo $k=\mathbb Q[\sqrt{-5}]$, los números $3$ y $2+\sqrt{-5}$ son irreducibles con norma igual a 9. EL cuerpo de clase de Hilbert $H = k[i]$, y en $H$ tenemos la factorización 
+		$$ 2+\sqrt{-5} = (\rho - i/\rho)(1/\rho +i\rho) $$
+	el número 3 puede factorizarse de una forma parecida 
+		$$ 3 = (\rho - i/\rho)(\rho +i/\rho) $$
+	claramente tenemos que
+		$$ (3,2+\sqrt{5}) = (\rho -i/\rho) $$
+	ya que los cofactores verifican (buscar la ec de Bezout) 
+	
+	El primo $\rho-\tfrac i\rho$ es un primo semi-inerte, ie tiene norma 9. 
+
+	Ningún otro de los dos subcuerpos de $H$: $Q[i]$ o $Q[\rho]$ tiene un elemento de norma divisible por 3 (no trivial), ésto quizás es lo que produce parte del descalabro de este cuerpo que se usa sistemáticamente como ejemplo de cuerpo sin factorización única. 
+	
+	Ahora el problema aparece cuando intentamos encontrar otro cuerpo en el que el ideal $(3,2+\sqrt{-5}$ se convierta en principal. Usando la técnica de Hecke, ponemos 
+		$$\lambda = \sqrt{2+\sqrt{-5}} = \frac{\sqrt{10} + i\sqrt{2}}2, $$
+	entonces $\lambda$ es una raiz del polinomio 
+		$$ \lambda^4 -4 \lambda ^2 +9 $$ 	
+	Sea $K = k[\lambda] = \mathbb Q[\lambda]$, vemos que $K = k[\sqrt{-2}]$. Por la teoría de géneros sabemos que ninguno de los primos $p \equiv 7,20 \pmod{20}$, está representado por la forma principal, sin embargo sus cuadrados si lo están, pongamos
+		$$ p^2 = a^2 + 5b^2 $$,
+	entonces (creo)
+		$$ \sqrt{ a + b\sqrt{-5}} \in K $$
+	En este cuerpo vemos que 
+		$$(3,2+\sqrt{5}) = (\lambda) $$
+	por la unicidad del gcd el cociente de ambos debe ser un entero de hecho:
+		$$ \frac{ \rho + \frac{i}{\rho} }{ \lambda } = 
+		  \frac{1}{2} ( \sqrt{2} + \sqrt{-2} )
+		$$
+	que es efectivamente una unidad (de un cuerpo intermedio entre ambos). 
+	
+	Vamos a considerar varias casuísticas, y supondremos que nuestro enteor algebraico es ``primo'' si es que somos capaces de darle sentido a esa palabra, así que sea $\pi$ un número cuya norma absoluta es una potencia del primo $p$ y tal que . 
+	
+	1) Supongamos que para $\alpha \in K$, tal que $\pi \vert \alpha$ implica $p\ vert \alpha$, 
+
+	Sean $m$ y $n$ son enteros distintos libres de cuadrados y $m = lm_1$, $n = ln_1$ con $l=(m,n)$, si clasificamos las posibles alternativas de valores de $m,n$y $m_1n_1$ módulo 4, y vemos que reordenando si necesario podemos suponer una de las siguientes posibilidades:
+		$$ (m,n) \equiv (1,1),(1,2),(2,3), (3,3) \pmod{4} $$
+	Entonces en [1] demuestran el siguiente teorema:
+	\begin{itemize}
+		\item Si $(m,n) \equiv (m_1,n_1) \equiv (1,1) \pmod{4}$ entonces 
+			$$ \left\lbrace 1, \frac{1+\sqrt{m}}2, \frac{1+\sqrt{n}}2, \frac{1+\sqrt{m}+\sqrt{n}+\sqrt{m_1n_1}}4 \right\rbrace $$
+		es una base entera y el discrimnante es $l^2m_1^2n_1^2$. 
+		\item Si $(m,n) \equiv -(m_1,n_1) \equiv (1,1) \pmod{4}$ entonces 
+			$$ \left\lbrace 1, \frac{1+\sqrt{m}}2, \frac{1+\sqrt{n}}2, \frac{1-\sqrt{m}+\sqrt{n}+\sqrt{m_1n_1}}4 \right\rbrace $$
+		es una base entera y el discrimnante es $l^2m_1^2n_1^2$.
+		\item Si $(m,n) \equiv (1,2) \pmod{4}$ entonces 
+			$$ \left\lbrace 1, \frac{1+\sqrt{m}}2, \sqrt{n}, \frac{\sqrt{n}+\sqrt{m_1n_1}}2 \right\rbrace $$
+		es una base entera y el discriminante es $16 l^2m_1^2n_1^2$.
+		\item Si $(m,n) \equiv (2,3) \pmod{4}$ entonces 
+			$$ \left\lbrace 1, \sqrt{m}, \sqrt{n}, \frac{\sqrt{m}+\sqrt{m_1n_1}}2 \right\rbrace $$
+		es una base entera y el discrimnante es $64 l^2m_1^2n_1^2$.
+		\item Si $(m,n) \equiv (3,3) \pmod{4}$ entonces 
+			$$ \left\lbrace 1, \sqrt{m}, \frac{\sqrt{m}+\sqrt{n}}2, \frac{1+\sqrt{m_1 n_1}}2 \right\rbrace $$
+		es una base entera y el discrimnante es $16 l^2m_1^2n_1^2$.
+	\end{itemize}	
+	
+	Vamos a usar este teorema para demostrar que si $p = \pi\pi' = \nu\nu' $ con $p$ primo impar y $\pi,\pi'$ y $\nu,\nu'$ enteros algebraicos de los cuerpos $\mathbb Q[\sqrt{m}]$ y $\mathbb Q[\sqrt{n}]$ respectivamente entonces $\pi$ y $\nu$ no son asociados. Suponemos que $m,n$ son libres de cuadrados y que $(m,n) = l$, $m= lm'$, $n=ln'$, 
+	
+	Supongamos $n$ y $m$ congruentes con 1 módulo $4$, y 
+		$$\pi = \frac{a + b\sqrt{m}}{2}, \nu = \frac{a' + b'\sqrt{m}}{2} $$
+	donde $b$ y $b'$ son coprimos con $p$, su producto es entonces 
+		\eq{TAN:NA:2}{\pi\nu = \frac{ aa' + a'b\sqrt{m} + ab'\sqrt{n} + lbb'\sqrt{m'n'}}{4} }
+	Escribamos $\pi\nu$ en términos de la base entera de $\mathbb Q[\sqrt{m},\sqrt{n}]$:
+		$$ \pi\nu = \dots + c \frac{1\pm\sqrt{m}+\sqrt{n}+\sqrt{m_1n_1}}4 $$
+	comparando con el término correspondiente en \refeq{TAN:NA:2} obtenemos $c = lbb'$ pero esto supone que si $(p,l)=1$ entonces $p\not\vert \pi\nu$, ya que en caso contrario dividiría todos los coeficientes de la expresión de $\pi\nu$ en la base entera. Ahora si $p\vert l$ la cosa es un poco más complicada, tendremos necesariamente $p \vert a$ luego $p\not\vert b$ y lo mismo para $a'$ y $b'$ 
+	
+	Entiendo que sin mayor problema podemos analizar uno a uno todos los casos, por ejemplo si $m\equiv n \equiv -1 \pmod{4}$, entonces tenemos
+		$$ \pi\nu = \dots + bb'l \sqrt{m'n'} $$
+	y comparando con la expresión de $\pi\nu$ en la base entera del cuerpo obtenemos de nuevo que si $(p,l)=1$ entonces el último coeficiente no puede ser divisible por $p$ y por lo tanto tampoco el entero algebraico. 
+	
+	Por otro lado cuando los primos dividen al discriminante lo anterior deja de ser cierto, y tenemos por ejemplo que $\sqrt{3}$ divide a $3+\sqrt{6}$, (y viz) el cociente es una unidad $\sqrt{3}+\sqrt{2}$ que no está en ninguno de los dos cuerpos. En general observamos que $\sqrt{3}$ es un divisor de muchos otros cuerpos cuadráticos 
+	
+	
+	
+	comparando el término que contiene a $\sqrt{m'n'}$ en ambas representaciones vemos que si $(p,l)=1$ entonces podemos escribir
+		$$ \pi\nu = \dots + a_k $$
+		
+	en términos de la base entera de $\mathbb Q[\sqrt{m},\sqrt{n}]$ tenemos que él término 
+	
+		
+	El resultado es bastante trabajoso. Suponemos primero que $p$ es primo con $2mn$, 
+
+		
+	
+	
+%[1] K. S. Williams. Integers of biquadratic elds. Canad. Math. Bull., 3:519{526, 1970.	
+	
+
+
+\subsection{Usar pari}
+%	(A lo largo de esta sección rodeo cada comando de pari por \pari{...} para comandos en una línea y \begin{mlpari}...\end{mlpari} para comandos multilínea. Sin ambargo no sé muy bien como definirlos.
+
+Dado un número algebraico $\alpha$ sea $\deg^* \alpha$ el grado mínimo sobre $\Q$ de uno de sus asociados. En el conjunto de asociados $\alpha^*$ de $\alpha$ de grado mínimo igual a $\deg^* \alpha$, consideremos los cuerpos $\mathbb Q[\alpha^*]$. La pregunta es si en alguna circunstancia pueden aparecer una infinidad de cuerpos distintos. 
+
+Considerando $\alpha = \sqrt[3]{2}$ vemos que sus conjugados son asociados que pertenecen a distintos cuerpos. Este ejemplo nos muestra que dicho cuerpo no es siempre único. Sin embargo para ideales principales primos en cu
+
+Observemos, que al menos para primos en cuerpos cuádrraticos 
+
+consideremos entre todos sus asociados uno que tenga grado mínimo sobre 
+
+La idea es ver si puede haber una infinidad de cuerpos de números diferentes, todos conteniendo una 
+
+en $\mathbb Q[i,\sqrt{5}]$ tenemos 
+
+
+
+This is a question out of curiosity, so please close it if it is not suitable for this site. 
+
+1. Any two algebraic integers $\alpha$ and $\beta$ have a unique gcd (up to asociates). Say there is a unique $\delta$ with $\delta \vert \alpha$ and $\delta \vert \beta$ and such that any common divisor of $\alpha$ and $\beta$ is a divisor also of $\delta$.
+
+I know his to be true, but the only proof I know of it uses the Hilbert class field. say if $H$ is the Hilbert class field of $\Q[\alpha,\beta]$ every ideal ($\alpha,\beta$ Do you know if it is possible to prove this with less parafernalia. 
+
+This is a very natural think to expect but my attemps to prove it has been ... 
+
+2. Given an algebraic number $\alpha$, let $\alpha'$ be one of it's associate with minimum degree over the racionals, say $n$. If $\alpha''$ is another associate of $\alpha$ of degree $n$ then $\alpha$ and $\alpha'$ belong to the same field of degree $n$ over $\Q$? The answer is obviously no, just take $\sqrt[3]{2}$. La segunda pregunta es entonces si existe sólo un número finito de cuerpos en los que se encuentre, y si estos cuerpos oson conjugados. En particular si la extensión $\Q[\alpha]$ es de Galois para $\alpha$
+
+
+
+I have not the least idea if this is true or not. I have tried to find some counter-example in biquadratic fields without success.
+
+We would define (in general) a prime algebraic integer as a number such that has no divisor $\pi'$ such that $\pi' \vert \pi$ 
+
+3. Every algebraic integer (or number) can be factored uniquely as the product of prime algebraic integers, with the following idea, 
+
+
+\section{2 the natural field}
+Esto es un intento de demostrar o de encontrar un contraejemplo del punto 2, considerando cueerpos bicuadráticos, la primera idea es usar "inducción" en el grado, ya que el resultado es claramente cierto para los números racionales. 
+De forma que partimos de números algebraico $\alpha$ y $\beta$ del mismo grado natural $n$, y asociados, pero tales que el cuerpo $\Q[\alpha,\beta]$ es de grado estrictamente superior a $n$.
+
+La segunda idea es utilizar intersecciones con numeros primos racionales, de grados naturales crecientes. 
+
+
+\section{El planeamiento clásico}
+Es interesante ver los distintos planteamientos que se utilizan en el siglo XIX en la construcción de la teoría algebraica de los números. El primer paso lo da Gauss con la teoría de formas cuadráticas binarias. Pero la generalización a extensiones de grados superiores es complicada. 
+
+El gran salto adelante lo da Kummer, con la invención delos números ideales, Kummer estaba estudiando la generalización de las leyes de reciprocidad descubiertas por Einsenstein para residuos de potencias 
+
+
+Dedekind encontró una generalización de las ideas de Kummer a cuerpos algebraicos arbitrarios, basada en la teoría de ideales, en vez de hablar de números ideales, hablamos desubanillos del anillo de enteros del cuerpo, ...
+
+
+
+\subsection{Clases de ideales en extensíones de Galois}
+
+Un extensión finita de cuerpos $K/\Q$ es de Galois $K$ contiene los conjugados de todos sus elementos, es decir si $\sigmaK = K$ para cada $\sigma \in G$. En una extensión de Galois se puede dar una versión mucho más sencilla de muchos de los teoremas básicos de ideales, y por ese motivo vamos a empezar con ellas. La propiedad fundametal de los ideales que nos permite demostrar todas las características deseables para estos números es la siguiente\footnote{En toda esta sección uso directamente ideas de Hilbert \cite{Hilbert:TANF}
+
+\enun{ANT:1}{Para cada ideal $\f a$ existe un ideal $\f b$ tal que $\f a\f b$ es un ideal principal.}
+
+Más adelane veremos como esta propiedad nos permite prácticamente por sí misma demostrar el teorema fundamental de la aritmética en los cuerpos de números:
+
+\enun{ANT:2}{Un ideal $a$ puede descomponerse de forma única, salvo por el orden, como producto de ideales primos.}
+
+Vamos a empezar con la demostración de $\refenun{ANT:1}$, que es curiosamente elemental cuando la extensión de de Galois [es bastante más complicada en general]. Sea 
+	$$\f J = \prod_{\sigma\in G}\sigma \f a$$
+El ideal $J$ es entonces invariante por el grupo $G$, sea $\alpha \in J$ cualquier número y sean $b_1=s_1\alpha, \dots,b_n=s_n\alpha$ sus funciones simétricas elementales (los coeficientes de su polino mínimo), y ahora sea 
+	$$ b(\alpha) = \gcd(b_1^{n!/1},b_2^{n!/2},\dots,b_n^{n!/n}) $$
+Si consideramos el ideal ${\f J}^{n!}$, vemos que 
+	$$ b_i^{n!/i} \equiv 0 \pmod{ {\f J}^{n!} } $$
+ya que $b_i$ es la suma de productos de $i$ conjugados distintos de $\alpha$ y todos esos conjugados están en $\f J$, luego
+	$$ b_i \equiv 0 \pmod{{\f J}^i} $$
+así que ${\f J}^{n!}$ divide a cada $b(\alpha$ luego también divide a su máximo común divisor 
+	$$ j = \gcd(\{b(\alpha), \alpha \in \f J\}) $$
+Por otr lado vemos que cada $b_i$ es divisible por $b(\alpha)^{i/n!}$ (no necesariamente en $K$), y por lo tanto también por $j^{i/n!}$, en particular usando el polinomio mínimo vemos que cada $\alpha\in \f J$ es divisible por $j^{1/n!}$, luego $j \mid {\f J¨}^{n!}$ que combinado con lo anterior nos da $J^{n!} = (j)$. Pero con esto hemos terminado, basta coger el ideal 
+	$$ \f b = {\f J}^{n!-1}\cdot \sigma_2 \f a \cdot \dots \cdot \sigma_n \f a $$
+y entonces 
+	$$ \f a \f b = {\f J}^{n!} = (j) $$
+
+Ahora podemos demostrar \refenun{ANT:2} usando una cadena de teoremas clásica:
+\begin{enumerate}
+\item {\em Si $\f c \ne 0, \f a, \f b$ son ideales con $\f a\f c = \f b \f c$ entonces $\f a = \f b$}. Ya que si $\f c {\f c}' = (\alpha)$, multiplicando ambos lados de la identidad obtenemos $\alpha \f a = \alpha \f b$.
+\item {\em Si todos los elementos de un ideal $\f c$ son congruentes con cero módulo $\f a$ entonces $\f c$ es divisible por $\f a$}. Ya que si $\f a'\f a = (\alpha)$ entonces todos los números de $\f a'\f c$ son divisibles por $\alpha$, luego $\f a'\f c = \alpha \f b$ para cierto $\f b$, luego 
+	$$ \alpha \f c = \f a \f a' \f c = \alpha \f a \f b $$
+es decir $\f c = \f a \f b $.
+\item {\em Si el producto de dos ideales $\f a\f b$ es divisible por un ideal primo $\f p$ entonces al menos uno de los dos ideales $\f a$  o $\f b$ es divisible por $\f p$}. Si $\f a$ no es divisible por $\p$ entonces el ideal $(\f a,\f p)$ es un divisor de $\f p$ distinto de $\f p$ luego tiene que ser $(1)$, luego $1 = \alpha + \pi$ para ciertos $\alpha \in \f a$ y $\pi \in  p$. Es decir para cada $\beta \in \f b$, 
+	$$\beta = \alpha\beta + \pi\beta $$
+pero los dos elementos de la derecha son divisibles por $\f p$ luego también lo es $\beta$, como esto es cierto para cada $\beta \in \f b$ tenemos $\f p \mid \f b$.
+\end{enumerate}
+
+
+
+
+
+\end{multicols}
+\end{document}

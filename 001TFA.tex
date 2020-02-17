@@ -1,0 +1,116 @@
+\documentclass{article}
+\usepackage[latin1]{inputenc}
+\usepackage[a4paper]{geometry}
+\usepackage{tikz}
+\usepackage{amssymb,amsmath,amsthm}
+\usepackage{moreverb}
+\usepackage{multicol}
+
+% Macros
+\def\Qalg{\overline{\mathbb{Q}}}
+
+\begin{document}
+\begin{multicols}{2}
+\include{defs}
+% Números algebraicos (con la idea de sescribir un blog)
+
+
+En tiempos de mi tatarabuelo los libros de teoría algebraica de los números empezaban definiendo los números algebraicos como raices de polinomios con coeficientes enteros, en esos tiempos algunos autores titulaban sus libros ``Introducción a la teoría de los números algebraicos'' (Pollard), o a la teoría de "cuerpos de números algebraicos'' (Hilbert), o ''Lecciones sobre la teoría de números algebraicos'' (Hecke) y así sucesivamente.
+
+Ahora las cosas han cambiado enormemente, para empezar los libros ya no definen los números algebraicos al principio, en vez de eso hablan de unas cosas llamadas valuaciones\footnote{{\em valuations} en inglés, no estoy totalmente seguro de que esta sea la traducción correcta al castellano}, de anillos de Dedekind, de normas y trazas, de cuerpos completos y de otra infinidad de cosas antes de definir el término número algebraico (si es que llegan a definirlo). Esto marca un cambio en los nombres de los libros que han pasado a llamarse '`Teoría algebraica de los números'' (Lang), ``Introducción a la teoría algebraica de los números'' (), aunque la diferencia en los nombres es sutil, -- en el primer caso los {\em algebraicos} son los números y en el segundo la que es {\em algebraica} es la teoría --,  la diferencia es importante, en los primeros suelo seguir los argumentos sin dificultad prácticamente hasta el final del libro, mientras que en los segundos me pierdo antes de terminar el primer capítulo.
+
+Mi objetivo es llegar a entender la teoría algebraica usando los números algebraicos. Para daros una idea de las dificultades de este plan intentad leer el primer capítulo de _Basic number theory_ the André Weil, que a pesar de título ni es básico ni estoy muy seguro de que trate de teoría de números, pero no puedo asegurarlo ya que no entiendo ni jota. 
+
+\section{TG 1. El teorema fundamental del álgebra}
+
+Para los que no lo hayan visto nunca, el teorema fundamental del álgebra asegura que todo polinomio con coeficientes complejos tiene una raíz, es decir si 
+$$ 	 P(x) = a_0 x^n + a_1 x^{n-1} + \dots + a_{n-1} x + a_n $$
+es un polinomio donde los $a_i$ son números complejos, $a_0 \ne 0$ y $n>0$ entonces existe un número complejo $\alpha$ tal que $ P(\alpha) = 0 $.\footnote{Si $\alpha$ es una raiz del polinomio $P(x)$ entonces podemos dividir $P(x)$ por el binomio $x-\alpha$, bueno este último punto viene bien recordarlo, en el {\em cole} le llamábamos el {em teorema de Fubini}.}
+
+El nombre de este teorema es curioso, se llama teorema fundamental del álgebra, pero nuca lo mencionan en los libros de álgebra. Sin embargo si uno se pone a indagar en los orígenes se ve que el nombre  estaba en su momento justificado ya que entonces el álgebra trataba de la resolución de ecuaciones polinomiales, y sólo recientemente a derivado en el superabstracto conglomerado de estructuras y morfismos entre ellas que estudiamos ahora. Me resultaría sorprendente que este teorema puediera demostrarse utilizando exclusivamente lo que ahora llamamos álgebra; todas las demostraciones que recuerdo (más o menos una y media:-) utilizan de una forma u otra el análisis, el caso más extremo es el siguiente sketch: {\em Supongamos que $f(x)$ es un polinomio que no se anula, como $f(x) \to \infty$ según $\lvert x\rvert \to \infty$, dado $\delta>0$ podemos encontrar un número $M$ tal que $\lvert f(x) \rvert  > \delta$ fuera del círculo $\lvert x\rvert \le M$. Como la función $\lvert f(x) \rvert$ es continua y $\lvert x\rvert \le M$ es compacto el teorema de Bolzano nos asegura que la función $\lvert f(x) \rvert$ tiene un valor mínimo $f(\alpha) = \epsilon$. $\epsilon$ no puede ser cero ya que en otro caso $\alpha$ sería una raíz de $f$ contradiciendo la hipóesis. Reuniendo todo la función $1/f(x)$ es holomorfa y acotada (ya que $\lvert f(x) \rvert \ge \operatorname{min}(\delta,\epsilon)$) luego por el teorema de Liouville constante.} 
+
+Lo normal ahora en álgebra es ir dirección contraria, si partimos de un polinomio con coeficientes en un cuerpo $K$ queremos encontrar un cuerpo $L$ conteniendo a $K$ en el que el polinomio factoriza totalmente. A dicho cuerpo se le llama un {\em splitting field} para el polinomio (Aquí me habéis pillado, no tengo ni idea de como llaman en castellano a este cuerpo). Aún mejor si podemos encontrar un cuerpo $M$ en el que todo polinomio con coeficientes en $K$ pueda escribirse como producto de factores lineales, entonces llamamos a $M$ un {\em cierre algebraico} de $K$ y lo representamos por $\overline K$. Si partimos de un cuerpo $N$ en el que todo polinomio con coeficientes en $K$ factoriza totalmente, entonces es razonable suponer que $M$. 
+
+En nuestro caso, y gracias al teorema fundamental del álgebra, $\mathbb{C}$ nos sirve como splitting field de todos los polinomios con coeficientes racionales, sin embargo es un poco excesivo ya que es mucho más grande de lo estrictamente necesario. El mínimo  subcuerpo de $\mathbb{C}$ que contiene todas las raices de polinomios con coeficientes en $\mathbb{Q}$ lo designaremos $\overline{Q}$, y entendemos que está bien definido y es único (y es más raro que un perro verde). 
+
+En la teoría clásica definiríamos ahora los números algebraicos como las raices de polinomios con coeficientes racionales, ya que el teorema fundamental del álgebra nos asegura que existen, y partiendo de esta definición empezaríamos a desarrollar las propiedades de estos números. Sin embargo ahora ya no, ahora suponemos que nos encontramos en un cuerpo cualquiera $K$, y que por lo tanto no tenemos teorema fundamental del álgebra del que tirar. En vista de lo cual, y ya que no podemos demostrarlo, lo definimos: Llamamos cierre algebraico de un cuerpo $K$ a un cuerpo $\overline K$ _lo más pequeño posible_, tal que cada polinomio en $K$ se factoriza en un producto de factores lineales en $\overline K$, y llamamos cuerpo de desomposición (_spliting field_) $L\subset \overline K$ de un polinomio $P(x)$ en $K[x]$ al mínimo subcuerpo de $\overline K$ en el que $P(x)$ factoriza en factores lineales.
+
+Esto está muy bien pero nadie nos asegura que $L$ o $\overline K$ existan, ni de que, en caso afirmativo, $L$ este caracterizado de forma única dentro de $\overline K$. Así que vamos a empezar nuestra excursión demostrando este resultado:
+
+\begin{teor}
+	Dado un cuerpo $K$ existe un cuerpo $\overline K$ único módulo isomorfismos tal que cada polinomio $P(x)$ con coeficientes en $K$ se descompone en $\overline K$ como producto de factores lineales:
+		$$ P(x) = c(x-\alpha_1)\cdots(x-\alpha_n)\quad c,\alpha_1,\dots,\alpha_n \in \overline K $$
+	donde $n$ es el grado de $P$.
+\end{teor}
+
+
+La demostración es algo elaborada y tenemos que tocar algunos puntos de álgebra abstracta, la idea es la siguiente, primero veremos que podemos suponer que $P(x)$ es irreducible. Ya que como veremos podemos escribir un polinomio como producto de polinomios irreducibles de una única manera. En segudo lugar observamos que el anillo cociente $K[x]/P(x)$ es un cuerpo, en este cuerpo $x$ es obviamente una raiz de $P$, luego usando otra variable $y$ podemos usar el teorema de Fubini para escribir el polinomio $P(y)$  en la forma $(y-x)P_1(y)$ 
+
+\begin{proof}
+	Escribamos $$ P(x) = f_1(x)\cdots f_k(x)$$ donde los $f_i(x)$ son irreducibles esto es posible ya que $P[x]$ es lo que se llama un anillo de factorización única. 
+	
+	
+\end{proof}
+
+Vamos a poner un ejemplo de este procedimiento, ya que es curioso, consideremos el polinomio $x^5-1$, claramente el 1 es una raiz así que podemos ponerlo como $(x-1)(x^4+x^3+x^2+x+1)$, la demostración no es obvia (ver XXX) Al considerar el cuerpo 
+	$$ L = \Q[x]/(x^4+x^3+x^2+x+1) $$
+podemos usar el teorema de Fubini para factorizarlo:
+
+$$ y^4 + y^3 + y^2 + y + 1    y-x
+   
+
+
+Números algebraicos
+-------------------
+
+La teoría de los números algebraicos trata de éstos números: de los números que son raices de polinomios con coeficientes racionales.
+
+Los números algebraicos incluyen a los racionales ya que cualquier número racional $a$ es trivialmente una raiz del polinomio $x-a$. Pero también incluyen una gran cantidad de números que no son racionales, por ejemplo $\sqrt{2}$, la diagonal del cuadrado de lado 1, que es raiz del polinomio $x^2-2$, pero no es un número racional tal y como demostró un pitagórico al que según la leyenda el descubrimiento le costó la vida. 
+
+Como consecuencia del teorema fundamental del álgebra, se dice que el conjunto de los números complejos $\C$, es algebraicamente cerrado, ya que todo polinomio tiene una raiz en él. El conjunto de todos los números algebraicos (al que se suele representar con el símbolo $\Qalg$) es también obviamente algebraicamente cerrado y podemos considerarlo como un subcuerpo de $\mathbb C$.
+
+Más adelante descubriremos que los números algebraicos están llenos de rarezas, sin embargo no son los números más raros, para verlo empecemos con un resultado muy sencillo: {\em El conjunto de los números algebraicos es numerable}. Para demostrarlo numeramos los polinomios con coeficientes enteros positivos, poniendo primero los que tienen menor valor de 
+	$$ n + a_n + \dots + a_0 $$
+y ordenando éstos en orden lexicográfico de los coeficientes, en la ordenación de los números algebraico pondremos consecutivos las $n$ raices (en orden lexicográfico de sus coordenadas real e imaginaria) de cada uno de los $2^{n+1}$ polinomios resultantes de poner un signo $\pm$ en cada uno de los coeficientes. Esto nos da una numeración precisa de todas las raices de polinomios \refeq{TAN:1:1}, (y aún cada número algebraico se repite una infinidad de veces) lo que prueba que existe una inyección de los números algebraicos en $\mathbb N$, como el recíproco es obvio los números algebraicos tienen el cardinal numerable. 
+
+En 1844 Joseph Liouville demostró que existen números que no son raiz de ningún polinomio con coeficientes racionales. Algo más tarde Georg Cantor demostró mucho más: los números reales no son numerables, es decir la mayor parte de los números reales no son raices de ecuaciones polinómicas con coeficientes racionales. Esto se deriva del argumento conocido como de diagonalización muy utilizado en otras ramas de matemáticas sobre todo en la lógica: Vamos a ver por reducción al absurdo que el conjunto de puntos del intervalo [0,1] no es numerable; si lo fuera consideremos una numeración de todos los puntos del segmento $a_1,a_2,a_3,\dots$, al escribirlos en base 2, serán de la forma 
+	$$ a_k =  0,d_1^{(k} d_2^{(k} d_3^{(k} \dots $$ 
+donde cada $d_i^{(k}$ es o cero o uno. Ahora consideremos el número $x$ formado de la siguiente manera: su dígito $k$-simo es igual a $1-d_k$, donde $d_k$ es el dígito $k$--simo de $a_k$. Claramente $x \ne a_k$ por que difiere de él en el $k$--simo dígito luego $x$ no está en nuestra sucesión, y hemos llegado a una contradicción ya que $x \in [0,1]$ luego por hipótesis debía estar contado con anterioridad. Curiosamente ni Liouville ni Cantor fueron ejecutados como consecuencia de sus descubrimientos, y eso que implica que prácticamente todos los números son infinitamente más extraños que $\sqrt{2}$; {\em o tempora o mores}. 
+
+En cualquier caso concluimos que el conjunto de los números algebraicos $\Qalg$, es estrictamente más pequeño que $\mathbb C$. 
+
+\notas{
+	El teorema de Liouville indica que los números algebraicos se aproximan muy mal utilizando números racinales, de forma más precisa: 
+	\begin{teor}[Teorema de Liouville]Sea $\alpha$ un número algebraico de grado $n$ entonces para cualesquiera $c$ y $\epsilon$ reales positivos arbitrarios exite un número finito de racionales $p/q$ tales que 
+		$$ \left\lvert \alpha - \frac{p}{q}\right\rvert < \frac{c}{q^{n+\epsilon}} $$
+	\end{teor}
+	({No me digáis que la palabra {\rm cualesquiera} no tiene un sonido maravilloso {\rm cualesquiera, cualesquiera, \dots } dan ganas de escribir un verso: {\em cualesquiera que sean / los racionales / nunca de $\alpha$ cerca / podrás hallarles} ups! perdón que se me ha ido la olla, vuelvo a nuestro tema)
+
+	\Pendt{hay una infinidad de maneras de meter $\Qalg$ en $\mathbb C$. mencionarlo aquí? }
+
+	\begin{teor}[Teorema de Roth (1952)]Sea $\alpha$ un número algebraico de grado $n$ entonces para cualesuiqera $c$ y $\epsilon$ reales positivos arbitrarios exite un número finito de racionales $p/q$ tales que 
+		$$ \left\lvert \alpha - \frac{p}{q}\right\rvert < \frac{c}{q^{2+\epsilon}} $$
+	\end{teor}
+
+	\begin{teor}{\em Gelfond & Schneider (19??)} Si $\alpha$ un número algebraico de grado 
+}
+
+\nota{
+		Hay una parametrización de las quinticas con grupo cíclico $\isom \Z/5$
+		Esto está tomado del siguiente post de \url{http://math.stackexchange.com/questions/1996552/any-more-cyclic-quintics}
+
+	Yes, there are infinitely many cyclic quintics as parameterized by the Emma Lehmer quintic
+
+		$$ y^5+n^2y^4-(2n^3+6n^2+10^n+10)y^3+(n^4+5n^3+11n^2+15^n+5)y^2+(n^3+4n^2+10n+10)y+1=0
+
+	with discriminant
+		$$	D=(7+10n+5n^2+n^3)^2(25+25n+15n^2+5n^3+n^4)^4 $$
+	and a root given by
+		$$ y=a+b\sum_{k=1}^{(p-1)/5}\zeta_p^{c^k} $$
+	with root of unity $\zeta_p =e^{2\pi i/p}$, and $p=25+25^n+15n^2+5n^3+n^4$ for integer some integer $a,b,c$. See this MO post (\url{http://mathoverflow.net/questions/190893/does-the-lehmer-quintic-parameterize-certain-minimal-polynomials-of-the-pth-ro} for the formulas for a,b,c
+
+	P.S. While $p=151$ does not seem to belong to this family, I find that,
+		$$ x^5+x^4-60x^3-12x* 2+784x+128=0 $$
+	with discriminant $d=2181514$ has the root $x=\sum_{k=1}^{30}e^{2\pi 23^k/151}$ .
+}
+
